@@ -140,31 +140,32 @@ public class CropOverlayView extends View {
     protected void onDraw(Canvas canvas) {
 
         super.onDraw(canvas);
+        if (isEnabled()) {
+            // Draw translucent background for the cropped area.
+            drawBackground(canvas, mBitmapRect);
 
-        // Draw translucent background for the cropped area.
-        drawBackground(canvas, mBitmapRect);
-
-        if (showGuidelines()) {
-            // Determines whether guidelines should be drawn or not
-            if (mGuidelines == GUIDELINES_ON) {
-                drawRuleOfThirdsGuidelines(canvas);
-            } else if (mGuidelines == GUIDELINES_ON_TOUCH) {
-                // Draw only when resizing
-                if (mPressedHandle != null)
+            if (showGuidelines()) {
+                // Determines whether guidelines should be drawn or not
+                if (mGuidelines == GUIDELINES_ON) {
                     drawRuleOfThirdsGuidelines(canvas);
-            } else if (mGuidelines == GUIDELINES_OFF) {
-                // Do nothing
+                } else if (mGuidelines == GUIDELINES_ON_TOUCH) {
+                    // Draw only when resizing
+                    if (mPressedHandle != null)
+                        drawRuleOfThirdsGuidelines(canvas);
+                } else if (mGuidelines == GUIDELINES_OFF) {
+                    // Do nothing
+                }
             }
+
+            // Draws the main crop window border.
+            canvas.drawRect(Edge.LEFT.getCoordinate(),
+                    Edge.TOP.getCoordinate(),
+                    Edge.RIGHT.getCoordinate(),
+                    Edge.BOTTOM.getCoordinate(),
+                    mBorderPaint);
+
+            drawCorners(canvas);
         }
-
-        // Draws the main crop window border.
-        canvas.drawRect(Edge.LEFT.getCoordinate(),
-                        Edge.TOP.getCoordinate(),
-                        Edge.RIGHT.getCoordinate(),
-                        Edge.BOTTOM.getCoordinate(),
-                        mBorderPaint);
-
-        drawCorners(canvas);
     }
 
     @Override
@@ -230,8 +231,7 @@ public class CropOverlayView extends View {
      * @param guidelines Integer that signals whether the guidelines should be
      *            on, off, or only showing when resizing.
      */
-    public void setGuidelines(int guidelines)
-    {
+    public void setGuidelines(int guidelines) {
         if (guidelines < 0 || guidelines > 2)
             throw new IllegalArgumentException("Guideline value must be set between 0 and 2. See documentation.");
         else {
@@ -251,8 +251,7 @@ public class CropOverlayView extends View {
      * @param fixAspectRatio Boolean that signals whether the aspect ratio
      *            should be maintained.
      */
-    public void setFixedAspectRatio(boolean fixAspectRatio)
-    {
+    public void setFixedAspectRatio(boolean fixAspectRatio) {
         mFixAspectRatio = fixAspectRatio;
 
         if (initializedCropWindow) {
@@ -267,8 +266,7 @@ public class CropOverlayView extends View {
      * @param aspectRatioX int that specifies the new X value of the aspect
      *            ratio
      */
-    public void setAspectRatioX(int aspectRatioX)
-    {
+    public void setAspectRatioX(int aspectRatioX) {
         if (aspectRatioX <= 0)
             throw new IllegalArgumentException("Cannot set aspect ratio value to a number less than or equal to 0.");
         else {
@@ -288,8 +286,7 @@ public class CropOverlayView extends View {
      * @param aspectRatioY int that specifies the new Y value of the aspect
      *            ratio
      */
-    public void setAspectRatioY(int aspectRatioY)
-    {
+    public void setAspectRatioY(int aspectRatioY) {
         if (aspectRatioY <= 0)
             throw new IllegalArgumentException("Cannot set aspect ratio value to a number less than or equal to 0.");
         else {

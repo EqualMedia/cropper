@@ -256,6 +256,14 @@ public class CropImageView extends FrameLayout {
         }
     }
 
+    public boolean isCroppingEnabled() {
+        return mCropOverlayView.isEnabled();
+    }
+
+    public void setCroppingEnabled(boolean croppingEnabled) {
+        mCropOverlayView.setEnabled(croppingEnabled);
+    }
+
     /**
      * Sets a Bitmap and initializes the image rotation according to the EXIT data.
      * <p>
@@ -341,6 +349,9 @@ public class CropImageView extends FrameLayout {
         final float displayedImageHeight = displayedImageRect.height();
         final float scaleFactorHeight = actualImageHeight / displayedImageHeight;
 
+        if (!isCroppingEnabled()) {
+            return mBitmap;
+        }
         // Get crop window position relative to the displayed image.
         final float cropWindowX = Edge.LEFT.getCoordinate() - displayedImageRect.left;
         final float cropWindowY = Edge.TOP.getCoordinate() - displayedImageRect.top;

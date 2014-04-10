@@ -1,4 +1,22 @@
-apply plugin: 'android-library'
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.9.+'
+	}
+}
+
+version = "1.0.4"
+group = "com.edmodo.cropper"
+
+apply plugin : 'maven'
+apply plugin : 'android-library'
+configurations {
+	archives {
+		extendsFrom configurations.default
+	}
+}	
 
 android {
     compileSdkVersion 19
@@ -11,4 +29,17 @@ android {
             res.srcDirs = ['res']
         }
     }
+}
+
+uploadArchives {
+	configuration = configurations.archives
+		repositories.mavenDeployer {
+		repository url : 'file://' + new File("/Users/Diego/mobile-android-third-party/mvn-repo").absolutePath
+
+		pom.project {
+			name 'edmodo-cropper'
+			packaging 'aar'
+			url 'https://github.com/edmodo/cropper'
+		}
+	}
 }
