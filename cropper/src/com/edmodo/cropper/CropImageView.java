@@ -334,7 +334,7 @@ public class CropImageView extends FrameLayout {
      * @return a new Bitmap representing the cropped image
      */
     public Bitmap getCroppedImage() {
-		if (!isCroppingEnabled()) {
+		if (!isCroppingEnabled() || mBitmap == null) {
             return mBitmap;
         }
 		
