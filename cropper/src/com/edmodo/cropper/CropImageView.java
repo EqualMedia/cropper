@@ -334,8 +334,11 @@ public class CropImageView extends FrameLayout {
      * @return a new Bitmap representing the cropped image
      */
     public Bitmap getCroppedImage() {
-
-        final Rect displayedImageRect = ImageViewUtil.getBitmapRectCenterInside(mBitmap, mImageView);
+		if (!isCroppingEnabled()) {
+            return mBitmap;
+        }
+		
+		final Rect displayedImageRect = ImageViewUtil.getBitmapRectCenterInside(mBitmap, mImageView);
 
         // Get the scale factor between the actual Bitmap dimensions and the
         // displayed dimensions for width.
@@ -349,9 +352,6 @@ public class CropImageView extends FrameLayout {
         final float displayedImageHeight = displayedImageRect.height();
         final float scaleFactorHeight = actualImageHeight / displayedImageHeight;
 
-        if (!isCroppingEnabled()) {
-            return mBitmap;
-        }
         // Get crop window position relative to the displayed image.
         final float cropWindowX = Edge.LEFT.getCoordinate() - displayedImageRect.left;
         final float cropWindowY = Edge.TOP.getCoordinate() - displayedImageRect.top;
@@ -381,18 +381,29 @@ public class CropImageView extends FrameLayout {
      * @return a RectF instance containing cropped area boundaries of the source Bitmap
      */
     public RectF getActualCropRect() {
+        return getActualCropRect(mBitmap.getWidth(), mBitmap.getHeight());
+    }
+	
+	/**
+     * Gets the crop window's position relative to the supplied Bitmap (not the image
+     * displayed in the CropImageView).  This is useful if you have passed in a downsampled bitmap
+	 * to this CropImageView for UI purposes, but want to crop the original one.
+     * 
+     * @return a RectF instance containing cropped area boundaries of the source Bitmap
+     */
+	public RectF getActualCropRect(int bitmapWidth, int bitmapHeight) {
 
-        final Rect displayedImageRect = ImageViewUtil.getBitmapRectCenterInside(mBitmap, mImageView);
+        final Rect displayedImageRect = ImageViewUtil.getBitmapRectCenterInside(bitmapWidth, bitmapHeight, mImageView.getWidth(), mImageView.getHeight());
 
         // Get the scale factor between the actual Bitmap dimensions and the
         // displayed dimensions for width.
-        final float actualImageWidth = mBitmap.getWidth();
+        final float actualImageWidth = bitmapWidth;
         final float displayedImageWidth = displayedImageRect.width();
         final float scaleFactorWidth = actualImageWidth / displayedImageWidth;
 
         // Get the scale factor between the actual Bitmap dimensions and the
         // displayed dimensions for height.
-        final float actualImageHeight = mBitmap.getHeight();
+        final float actualImageHeight = bitmapHeight;
         final float displayedImageHeight = displayedImageRect.height();
         final float scaleFactorHeight = actualImageHeight / displayedImageHeight;
 
@@ -412,8 +423,8 @@ public class CropImageView extends FrameLayout {
         // exceed the source Bitmap bounds.
         actualCropLeft = Math.max(0f, actualCropLeft);
         actualCropTop = Math.max(0f, actualCropTop);
-        actualCropRight = Math.min(mBitmap.getWidth(), actualCropRight);
-        actualCropBottom = Math.min(mBitmap.getHeight(), actualCropBottom);
+        actualCropRight = Math.min(bitmapWidth, actualCropRight);
+        actualCropBottom = Math.min(bitmapHeight, actualCropBottom);
 
         final RectF actualCropRect = new RectF(actualCropLeft,
                                                actualCropTop,
@@ -422,7 +433,7 @@ public class CropImageView extends FrameLayout {
 
         return actualCropRect;
     }
-
+	
     /**
      * Sets whether the aspect ratio is fixed or not; true fixes the aspect ratio, while
      * false allows it to be changed.
@@ -475,6 +486,10 @@ public class CropImageView extends FrameLayout {
         mDegreesRotated += degrees;
         mDegreesRotated = mDegreesRotated % 360;
     }
+	
+	public int getDegreesRotated() {
+		return mDegreesRotated;
+	}
 
     // Private Methods /////////////////////////////////////////////////////////
 

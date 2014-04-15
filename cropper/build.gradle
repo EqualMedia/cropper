@@ -7,7 +7,7 @@ buildscript {
 	}
 }
 
-version = "1.0.4"
+version = "1.0.5"
 group = "com.edmodo.cropper"
 
 apply plugin : 'maven'
@@ -34,7 +34,7 @@ android {
 uploadArchives {
 	configuration = configurations.archives
 		repositories.mavenDeployer {
-		repository url : 'file://' + new File("/Users/Diego/mobile-android-third-party/mvn-repo").absolutePath
+		repository url : 'file://' + new File("C:/Development/Projects/State/mvn-repo").absolutePath
 
 		pom.project {
 			name 'edmodo-cropper'
